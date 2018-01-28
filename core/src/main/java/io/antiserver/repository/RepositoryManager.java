@@ -4,8 +4,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import io.antiserver.model.AntiserverDependency;
+
 public interface RepositoryManager {
 
-    CompletableFuture<List<URL>> classpath(List<RunDependency> dependencies);
+    CompletableFuture<List<URL>> classpath(List<AntiserverDependency> dependencies);
 
 }

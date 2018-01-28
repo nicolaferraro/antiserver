@@ -1,6 +1,5 @@
 package io.antiserver.container;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -10,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,8 +17,6 @@ import io.antiserver.Serializer;
 public class DefaultContainerLauncher implements ContainerLauncher {
 
     private static final String FUNCTIONS_FILE = "META-INF/antiserver/functions";
-
-    private LinkedBlockingQueue<List<URL>> queue = new LinkedBlockingQueue<>();
 
     @Override
     public CompletableFuture<Container> launch(List<URL> classpath) {
@@ -89,11 +85,6 @@ public class DefaultContainerLauncher implements ContainerLauncher {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }
-
-                @Override
-                public void close() throws IOException {
-                    // TODO limit max number of containers
                 }
             });
 

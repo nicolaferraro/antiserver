@@ -1,12 +1,12 @@
-package io.antiserver.repository;
+package io.antiserver.model;
 
 import java.util.Objects;
 
-public class RunMavenDependency implements RunDependency {
+public class AntiserverMavenDependency implements AntiserverDependency {
 
     private String gav;
 
-    public RunMavenDependency(String gav) {
+    public AntiserverMavenDependency(String gav) {
         this.gav = Objects.requireNonNull(gav);
     }
 

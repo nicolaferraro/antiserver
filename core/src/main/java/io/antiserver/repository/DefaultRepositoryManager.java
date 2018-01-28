@@ -5,11 +5,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import io.antiserver.model.AntiserverDependency;
+import io.antiserver.model.AntiserverMavenDependency;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -33,9 +34,6 @@ import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 
 public class DefaultRepositoryManager implements RepositoryManager {
 
-    private static final String LOCAL_REPO = "/home/nferraro/.m2/repository";
-//    private static final String LOCAL_REPO = "target/repo";
-
     private RepositorySystem system;
 
     private DefaultRepositorySystemSession session;
@@ -46,11 +44,7 @@ public class DefaultRepositoryManager implements RepositoryManager {
 
     private CachingTreeResolver resolver;
 
-    public DefaultRepositoryManager() {
-        this(Collections.emptyList());
-    }
-
-    public DefaultRepositoryManager(List<RunMavenDependency> managedDependencies) {
+    public DefaultRepositoryManager(String localRepo, List<AntiserverMavenDependency> managedDependencies) {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         locator.addService(TransporterFactory.class, FileTransporterFactory.class);
@@ -59,7 +53,7 @@ public class DefaultRepositoryManager implements RepositoryManager {
 
         RepositoryPolicy fastestPolicy = new RepositoryPolicy(true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
 
-        this.localRepo = new RemoteRepository.Builder("run.repo", "default", new File(LOCAL_REPO).toURI().toString())
+        this.localRepo = new RemoteRepository.Builder("run.repo", "default", new File(localRepo).toURI().toString())
                 .setSnapshotPolicy(fastestPolicy)
                 .setReleasePolicy(fastestPolicy)
                 .build();
@@ -77,7 +71,7 @@ public class DefaultRepositoryManager implements RepositoryManager {
         this.repositories = Arrays.asList(this.localRepo, proxy, mavenCentral);
 
         this.session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepository = new LocalRepository(LOCAL_REPO);
+        LocalRepository localRepository = new LocalRepository(localRepo);
         this.session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
 
         List<Dependency> managedDeps = resolveBoms(managedDependencies);
@@ -85,14 +79,14 @@ public class DefaultRepositoryManager implements RepositoryManager {
     }
 
     @Override
-    public CompletableFuture<List<URL>> classpath(List<RunDependency> dependencies) {
+    public CompletableFuture<List<URL>> classpath(List<AntiserverDependency> dependencies) {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
                 List<DependencyNode> children = dependencies.stream()
-                        .filter(RunMavenDependency.class::isInstance)
-                        .map(RunMavenDependency.class::cast)
-                        .map(RunMavenDependency::getGav)
+                        .filter(AntiserverMavenDependency.class::isInstance)
+                        .map(AntiserverMavenDependency.class::cast)
+                        .map(AntiserverMavenDependency::getGav)
                         .map(resolver::resolve)
                         .collect(Collectors.toList());
 
@@ -126,10 +120,10 @@ public class DefaultRepositoryManager implements RepositoryManager {
         }
     }
 
-    private List<Dependency> resolveBoms(List<RunMavenDependency> managedDependencies) {
+    private List<Dependency> resolveBoms(List<AntiserverMavenDependency> managedDependencies) {
         try {
             List<Dependency> managed = new ArrayList<>();
-            for (RunMavenDependency manDependency : managedDependencies) {
+            for (AntiserverMavenDependency manDependency : managedDependencies) {
                 Artifact bom = new DefaultArtifact(manDependency.getGav());
                 if (!"pom".equals(bom.getExtension())) {
                     throw new IllegalArgumentException("Bom " + bom + " is not of type 'pom'");

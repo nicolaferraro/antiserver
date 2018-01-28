@@ -21,7 +21,6 @@
     <modules>
         <module>core</module>
         <module>examples/simple</module>
-        <module>api</module>
     </modules>
 
 
