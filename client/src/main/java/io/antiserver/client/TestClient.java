@@ -22,7 +22,6 @@ public class TestClient {
                 .function("camel")
                 .addMavenDependency("org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE")
                 .addMavenDependency("io.antiserver.examples:antiserver-examples-simple:1.0-SNAPSHOT")
-                .addJarDependency(new FileInputStream("examples/simple/target/antiserver-examples-simple-1.0-SNAPSHOT.jar"))
                 .build()).get().getOutput());
 
         System.out.println(client.process(new AntiserverRequest.Builder<String>()
