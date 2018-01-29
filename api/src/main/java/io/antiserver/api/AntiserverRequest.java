@@ -1,5 +1,6 @@
 package io.antiserver.api;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,6 +72,10 @@ public class AntiserverRequest<T> {
 
         public Builder<T> addMavenDependency(String gav) {
             return this.addDependency(new AntiserverMavenDependency(gav));
+        }
+
+        public Builder<T> addJarDependency(InputStream fileStream) {
+            return this.addDependency(new AntiserverJarDependency(fileStream));
         }
 
         public AntiserverRequest<T> build() {

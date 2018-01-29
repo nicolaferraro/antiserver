@@ -1,10 +1,12 @@
 package io.antiserver.runtime;
 
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.protobuf.ByteString;
 import io.antiserver.api.Antiserver;
+import io.antiserver.api.AntiserverJarDependency;
 import io.antiserver.api.AntiserverMavenDependency;
 import io.antiserver.api.AntiserverRequest;
 import io.antiserver.api.Serializer;
@@ -34,9 +36,14 @@ class RemoteAntiserverService extends RemoteAntiserverServiceGrpc.RemoteAntiserv
                 .outputType(JsonNode.class)
                 .function(remoteRequest.getFunction())
                 .input(serializer.deserialize(remoteRequest.getInput().newInput(), Object.class))
-                .dependencies(remoteRequest.getMavenDependenciesList().stream()
-                        .map(AntiserverMavenDependency::new)
-                        .collect(Collectors.toList())
+                .dependencies(
+                        Stream.concat(
+                                remoteRequest.getMavenDependenciesList().stream()
+                                    .map(AntiserverMavenDependency::new),
+                                remoteRequest.getJarDependenciesList().stream()
+                                        .map(ByteString::newInput)
+                                        .map(AntiserverJarDependency::new)
+                        ).collect(Collectors.toList())
                 )
                 .build();
 

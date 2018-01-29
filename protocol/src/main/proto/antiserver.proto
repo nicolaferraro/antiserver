@@ -17,6 +17,7 @@ message RemoteAntiserverRequest {
   string            function = 1;
   bytes             input    = 2;
   repeated string   mavenDependencies = 3;
+  repeated bytes    jarDependencies = 4;
 }
 
 message RemoteAntiserverResponse {

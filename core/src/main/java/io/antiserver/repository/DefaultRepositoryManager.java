@@ -79,13 +79,11 @@ public class DefaultRepositoryManager implements RepositoryManager {
     }
 
     @Override
-    public CompletableFuture<List<URL>> classpath(List<AntiserverDependency> dependencies) {
+    public CompletableFuture<List<URL>> classpath(List<AntiserverMavenDependency> dependencies) {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
                 List<DependencyNode> children = dependencies.stream()
-                        .filter(AntiserverMavenDependency.class::isInstance)
-                        .map(AntiserverMavenDependency.class::cast)
                         .map(AntiserverMavenDependency::getGav)
                         .map(resolver::resolve)
                         .collect(Collectors.toList());
