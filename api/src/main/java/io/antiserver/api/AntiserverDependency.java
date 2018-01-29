@@ -1,4 +1,4 @@
-package io.antiserver.model;
+package io.antiserver.api;
 
 public interface AntiserverDependency {
 }

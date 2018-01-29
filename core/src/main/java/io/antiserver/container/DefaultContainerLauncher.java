@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.antiserver.Serializer;
+import io.antiserver.api.Serializer;
 
 public class DefaultContainerLauncher implements ContainerLauncher {
 

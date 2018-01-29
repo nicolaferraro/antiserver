@@ -4,9 +4,9 @@ import java.util.concurrent.CompletableFuture;
 
 import io.antiserver.container.ContainerLauncher;
 import io.antiserver.container.DefaultContainerLauncher;
-import io.antiserver.model.AntiserverConfig;
-import io.antiserver.model.AntiserverRequest;
-import io.antiserver.model.AntiserverResponse;
+import io.antiserver.api.Antiserver;
+import io.antiserver.api.AntiserverRequest;
+import io.antiserver.api.AntiserverResponse;
 import io.antiserver.repository.DefaultRepositoryManager;
 import io.antiserver.repository.RepositoryManager;
 
@@ -16,18 +16,21 @@ class DefaultAntiserver implements Antiserver {
 
     private ContainerLauncher launcher;
 
-    public DefaultAntiserver(AntiserverConfig config) {
+    DefaultAntiserver(AntiserverConfig config) {
         this.repositoryManager = new DefaultRepositoryManager(config.getMavenRepositoryPath(), config.getBoms());
         this.launcher = new DefaultContainerLauncher();
     }
 
     @Override
-    public CompletableFuture<AntiserverResponse> process(AntiserverRequest request) {
+    public <T> CompletableFuture<AntiserverResponse<T>> process(AntiserverRequest<T> request) {
         return repositoryManager.classpath(request.getDependencies())
                 .thenCompose(launcher::launch)
                 .thenApply(container -> container.getFunction(request.getFunction(), request.getOutputType()))
                 .thenApply(function -> function.apply(request.getInput()))
-                .thenApply(output -> new AntiserverResponse(request.getFunction(), output));
+                .thenApply(output -> new AntiserverResponse.Builder<T>()
+                        .function(request.getFunction())
+                        .output(output)
+                        .build());
     }
 
 }

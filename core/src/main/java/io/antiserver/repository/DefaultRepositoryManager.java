@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import io.antiserver.model.AntiserverDependency;
-import io.antiserver.model.AntiserverMavenDependency;
+import io.antiserver.api.AntiserverDependency;
+import io.antiserver.api.AntiserverMavenDependency;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;

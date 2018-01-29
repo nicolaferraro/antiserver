@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import io.antiserver.model.AntiserverDependency;
+import io.antiserver.api.AntiserverDependency;
 
 public interface RepositoryManager {
 

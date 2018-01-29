@@ -1,7 +1,9 @@
-package io.antiserver.model;
+package io.antiserver;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.antiserver.api.AntiserverMavenDependency;
 
 public class AntiserverConfig {
 
