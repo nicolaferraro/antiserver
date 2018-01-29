@@ -15,6 +15,7 @@ public class Test {
 
         AntiserverConfig config = new AntiserverConfig();
         config.setMavenRepositoryPath("/home/nferraro/.m2/repository");
+        config.setJarTempPath("/tmp/antiserver");
         config.setBoms(Arrays.asList(
                 new AntiserverMavenDependency("org.springframework.boot:spring-boot-dependencies:pom:1.5.9.RELEASE"),
                 new AntiserverMavenDependency("org.apache.camel:camel-spring-boot-dependencies:pom:2.20.2.RELEASE")

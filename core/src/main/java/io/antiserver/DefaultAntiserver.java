@@ -28,7 +28,7 @@ class DefaultAntiserver implements Antiserver {
 
     DefaultAntiserver(AntiserverConfig config) {
         this.repositoryManager = new DefaultRepositoryManager(config.getMavenRepositoryPath(), config.getBoms());
-        this.jarManager = new DefaultJarManager();
+        this.jarManager = new DefaultJarManager(config.getJarTempPath());
         this.launcher = new DefaultContainerLauncher();
     }
 

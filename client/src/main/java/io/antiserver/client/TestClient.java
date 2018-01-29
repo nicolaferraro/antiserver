@@ -16,21 +16,26 @@ public class TestClient {
         data.put("name", "World!");
 
 
-        System.out.println(client.process(new AntiserverRequest.Builder<String>()
-                .outputType(String.class)
-                .input(data)
-                .function("camel")
-                .addMavenDependency("org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE")
-                .addMavenDependency("io.antiserver.examples:antiserver-examples-simple:1.0-SNAPSHOT")
-                .build()).get().getOutput());
+//        System.out.println(client.process(new AntiserverRequest.Builder<String>()
+//                .outputType(String.class)
+//                .input(data)
+//                .function("camel")
+//                .addMavenDependency("org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE")
+//                .addMavenDependency("io.antiserver.examples:antiserver-examples-simple:1.0-SNAPSHOT")
+//                .build()).get().getOutput());
 
+        System.out.println("----");
+        long time = System.currentTimeMillis();
         System.out.println(client.process(new AntiserverRequest.Builder<String>()
                 .outputType(String.class)
                 .input(data)
                 .function("camel")
                 .addMavenDependency("org.apache.camel:camel-core:2.20.2")
+//                .addMavenDependency("org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE")
                 .addJarDependency(new FileInputStream("examples/simple/target/antiserver-examples-simple-1.0-SNAPSHOT.jar"))
                 .build()).get().getOutput());
+
+        System.out.println("---- " + (System.currentTimeMillis()-time) + " millis");
     }
 
 }

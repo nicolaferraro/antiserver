@@ -7,9 +7,9 @@ import io.antiserver.api.AntiserverMavenDependency;
 
 public class AntiserverConfig {
 
-    public static final String DEFAULT_MAVEN_REPOSITORY_PATH = "target/repo";
+    private String mavenRepositoryPath;
 
-    private String mavenRepositoryPath = DEFAULT_MAVEN_REPOSITORY_PATH;
+    private String jarTempPath;
 
     private List<AntiserverMavenDependency> boms = new ArrayList<>();
 
@@ -22,6 +22,14 @@ public class AntiserverConfig {
 
     public void setMavenRepositoryPath(String mavenRepositoryPath) {
         this.mavenRepositoryPath = mavenRepositoryPath;
+    }
+
+    public String getJarTempPath() {
+        return jarTempPath;
+    }
+
+    public void setJarTempPath(String jarTempPath) {
+        this.jarTempPath = jarTempPath;
     }
 
     public List<AntiserverMavenDependency> getBoms() {

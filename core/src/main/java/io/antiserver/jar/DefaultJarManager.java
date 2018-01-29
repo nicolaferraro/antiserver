@@ -12,6 +12,15 @@ import org.apache.commons.io.IOUtils;
 
 public class DefaultJarManager implements JarManager {
 
+    private File baseDir;
+
+    public DefaultJarManager(String basePath) {
+        this.baseDir = new File(basePath);
+        if (!this.baseDir.mkdirs()) {
+            throw new RuntimeException("Unable to create base dir for jar files in " + basePath);
+        }
+    }
+
     @Override
     public CompletableFuture<List<URL>> classpath(List<AntiserverJarDependency> dependencies) {
         return CompletableFuture.supplyAsync(() -> dependencies.stream()
@@ -21,7 +30,7 @@ public class DefaultJarManager implements JarManager {
 
     private URL save(AntiserverJarDependency jar) {
         try {
-            File file = File.createTempFile("antiserver", ".jar");
+            File file = File.createTempFile("antiserver-", ".jar", baseDir);
             file.deleteOnExit();
 
             try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {

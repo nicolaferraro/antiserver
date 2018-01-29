@@ -38,13 +38,14 @@ public class DefaultRepositoryManager implements RepositoryManager {
 
     private DefaultRepositorySystemSession session;
 
-    private RemoteRepository localRepo;
-
     private List<RemoteRepository> repositories;
 
     private CachingTreeResolver resolver;
 
-    public DefaultRepositoryManager(String localRepo, List<AntiserverMavenDependency> managedDependencies) {
+    public DefaultRepositoryManager(String localRepoPath, List<AntiserverMavenDependency> managedDependencies) {
+        if (!new File(localRepoPath).mkdirs()) {
+            throw new IllegalArgumentException("Cannot read or create repository location at " + localRepoPath);
+        }
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         locator.addService(TransporterFactory.class, FileTransporterFactory.class);
@@ -53,7 +54,7 @@ public class DefaultRepositoryManager implements RepositoryManager {
 
         RepositoryPolicy fastestPolicy = new RepositoryPolicy(true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
 
-        this.localRepo = new RemoteRepository.Builder("run.repo", "default", new File(localRepo).toURI().toString())
+        RemoteRepository localRepo = new RemoteRepository.Builder("antiserver.repo", "default", new File(localRepoPath).toURI().toString())
                 .setSnapshotPolicy(fastestPolicy)
                 .setReleasePolicy(fastestPolicy)
                 .build();
@@ -68,10 +69,10 @@ public class DefaultRepositoryManager implements RepositoryManager {
                 .setReleasePolicy(fastestPolicy)
                 .build();
 
-        this.repositories = Arrays.asList(this.localRepo, proxy, mavenCentral);
+        this.repositories = Arrays.asList(localRepo, proxy, mavenCentral);
 
         this.session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepository = new LocalRepository(localRepo);
+        LocalRepository localRepository = new LocalRepository(localRepoPath);
         this.session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
 
         List<Dependency> managedDeps = resolveBoms(managedDependencies);
