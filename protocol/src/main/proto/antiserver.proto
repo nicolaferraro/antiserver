@@ -11,6 +11,8 @@ service RemoteAntiserverService {
 
   rpc Invoke (RemoteAntiserverRequest) returns (RemoteAntiserverResponse) {}
 
+  rpc Preload (RemoteAntiserverPreloadRequest) returns (RemoteAntiserverPreloadResponse) {}
+
 }
 
 message RemoteAntiserverRequest {
@@ -23,4 +25,11 @@ message RemoteAntiserverRequest {
 message RemoteAntiserverResponse {
   string function = 1;
   bytes  output   = 2;
+}
+
+message RemoteAntiserverPreloadRequest {
+  repeated string   mavenDependencies = 1;
+}
+
+message RemoteAntiserverPreloadResponse {
 }

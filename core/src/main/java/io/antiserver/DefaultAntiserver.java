@@ -17,8 +17,12 @@ import io.antiserver.jar.DefaultJarManager;
 import io.antiserver.jar.JarManager;
 import io.antiserver.repository.DefaultRepositoryManager;
 import io.antiserver.repository.RepositoryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class DefaultAntiserver implements Antiserver {
+
+    private static Logger LOG = LoggerFactory.getLogger(DefaultAntiserver.class);
 
     private RepositoryManager repositoryManager;
 
@@ -34,7 +38,7 @@ class DefaultAntiserver implements Antiserver {
 
     @Override
     public <T> CompletableFuture<AntiserverResponse<T>> process(AntiserverRequest<T> request) {
-
+        long startTime = System.currentTimeMillis();
         CompletableFuture<List<URL>> mavenClasspath = repositoryManager.classpath(request.getDependencies().stream()
                 .filter(AntiserverMavenDependency.class::isInstance)
                 .map(AntiserverMavenDependency.class::cast)
@@ -54,10 +58,18 @@ class DefaultAntiserver implements Antiserver {
         })).thenCompose(launcher::launch)
                 .thenApply(container -> container.getFunction(request.getFunction(), request.getOutputType()))
                 .thenApply(function -> function.apply(request.getInput()))
-                .thenApply(output -> new AntiserverResponse.Builder<T>()
-                        .function(request.getFunction())
-                        .output(output)
-                        .build());
+                .thenApply(output -> {
+                    LOG.info("Call to function " + request.getFunction() + " completed in " + (System.currentTimeMillis() - startTime) + " millis");
+                    return new AntiserverResponse.Builder<T>()
+                            .function(request.getFunction())
+                            .output(output)
+                            .build();
+                });
     }
 
+    @Override
+    public CompletableFuture<Void> preload(List<AntiserverMavenDependency> dependencies) {
+        return repositoryManager.preload(dependencies)
+                .thenApply(urls -> null);
+    }
 }

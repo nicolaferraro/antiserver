@@ -16,6 +16,7 @@ public class RuntimeConfig {
 
     private static final String ENV_MAVEN_REPOSITORY_PATH = "ANTISERVER_MAVEN_REPOSITORY_PATH";
     private static final String ENV_MAVEN_BOMS = "ANTISERVER_MAVEN_BOMS";
+    private static final String ENV_PRELOADED_ARTIFACTS = "ANTISERVER_PRELOADED_ARTIFACTS";
 
     public int getPort() {
         return 8080;
@@ -49,6 +50,15 @@ public class RuntimeConfig {
         });
         LOG.info("Using repository location: " + path);
         return path;
+    }
+
+    public List<AntiserverMavenDependency> getPreloadedArtifacts() {
+        String bomCsv = getEnv(ENV_PRELOADED_ARTIFACTS, () -> "");
+        return Arrays.stream(bomCsv.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(AntiserverMavenDependency::new)
+                .collect(Collectors.toList());
     }
 
     private String getEnv(String key, Supplier<String> defaultValue) {

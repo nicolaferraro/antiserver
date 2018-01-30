@@ -10,4 +10,6 @@ public interface RepositoryManager {
 
     CompletableFuture<List<URL>> classpath(List<AntiserverMavenDependency> dependencies);
 
+    CompletableFuture<Void> preload(List<AntiserverMavenDependency> dependencies);
+
 }

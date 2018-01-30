@@ -1,5 +1,6 @@
 package io.antiserver.runtime;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -10,6 +11,8 @@ import io.antiserver.api.AntiserverJarDependency;
 import io.antiserver.api.AntiserverMavenDependency;
 import io.antiserver.api.AntiserverRequest;
 import io.antiserver.api.Serializer;
+import io.antiserver.protocol.RemoteAntiserverPreloadRequest;
+import io.antiserver.protocol.RemoteAntiserverPreloadResponse;
 import io.antiserver.protocol.RemoteAntiserverRequest;
 import io.antiserver.protocol.RemoteAntiserverResponse;
 import io.antiserver.protocol.RemoteAntiserverServiceGrpc;
@@ -64,4 +67,21 @@ class RemoteAntiserverService extends RemoteAntiserverServiceGrpc.RemoteAntiserv
                 });
     }
 
+    @Override
+    public void preload(RemoteAntiserverPreloadRequest request, StreamObserver<RemoteAntiserverPreloadResponse> responseObserver) {
+        List<AntiserverMavenDependency> dependencies = request.getMavenDependenciesList().stream()
+                .map(AntiserverMavenDependency::new)
+                .collect(Collectors.toList());
+
+        antiserver.preload(dependencies)
+                .thenApply(response -> {
+                    responseObserver.onNext(RemoteAntiserverPreloadResponse.newBuilder().build());
+                    responseObserver.onCompleted();
+                    return null;
+                }).exceptionally(ex -> {
+                    LOG.error("Error while preloading dependencies", ex);
+                    responseObserver.onError(ex);
+                    return null;
+                });
+    }
 }

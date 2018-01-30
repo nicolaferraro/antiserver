@@ -13,4 +13,11 @@ public class AntiserverMavenDependency implements AntiserverDependency {
     public String getGav() {
         return gav;
     }
+
+    @Override
+    public String toString() {
+        return "AntiserverMavenDependency{" +
+                "gav='" + gav + '\'' +
+                '}';
+    }
 }

@@ -23,6 +23,12 @@ public class Runtime {
 
         Antiserver antiserver = AntiserverFactory.create(config);
 
+        if (!runtime.getPreloadedArtifacts().isEmpty()) {
+            LOG.info("Preloading dependencies: " + runtime.getPreloadedArtifacts());
+            antiserver.preload(runtime.getPreloadedArtifacts()).get();
+        }
+
+        LOG.info("Starting the Antiserver...");
         RemoteAntiserverService antiserverService = new RemoteAntiserverService(antiserver);
 
         Server server = ServerBuilder.forPort(runtime.getPort())

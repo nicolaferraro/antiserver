@@ -12,8 +12,12 @@ import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CachingTreeResolver {
+
+    private static Logger LOG = LoggerFactory.getLogger(CachingTreeResolver.class);
 
     private RepositorySystem system;
 
@@ -39,6 +43,7 @@ public class CachingTreeResolver {
 
     private DependencyNode doResolve(String gav) {
         try {
+            LOG.info("Resolving tree of " + gav + " for the first time...");
             Dependency dependency = new Dependency(new DefaultArtifact(gav), "compile");
 
             CollectRequest collectRequest = new CollectRequest();

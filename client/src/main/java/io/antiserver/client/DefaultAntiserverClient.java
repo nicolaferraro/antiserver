@@ -1,5 +1,6 @@
 package io.antiserver.client;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import io.antiserver.api.AntiserverMavenDependency;
 import io.antiserver.api.AntiserverRequest;
 import io.antiserver.api.AntiserverResponse;
 import io.antiserver.api.Serializer;
+import io.antiserver.protocol.RemoteAntiserverPreloadRequest;
 import io.antiserver.protocol.RemoteAntiserverRequest;
 import io.antiserver.protocol.RemoteAntiserverResponse;
 import io.antiserver.protocol.RemoteAntiserverServiceGrpc;
@@ -54,6 +56,21 @@ class DefaultAntiserverClient implements AntiserverClient {
                     .function(remoteResponse.getFunction())
                     .output(serializer.deserialize(remoteResponse.getOutput().toByteArray(), antiserverRequest.getOutputType()))
                     .build();
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> preload(List<AntiserverMavenDependency> dependencies) {
+        return CompletableFuture.supplyAsync(() -> {
+            RemoteAntiserverPreloadRequest remotePreloadRequest = RemoteAntiserverPreloadRequest.newBuilder()
+                    .addAllMavenDependencies(
+                            dependencies.stream().map(AntiserverMavenDependency::getGav)
+                            .collect(Collectors.toList())
+                    )
+                    .build();
+
+            stub.preload(remotePreloadRequest);
+            return null;
         });
     }
 

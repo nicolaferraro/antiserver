@@ -15,4 +15,8 @@ public class AntiserverJarDependency implements AntiserverDependency {
         return fileStream;
     }
 
+    @Override
+    public String toString() {
+        return "AntiserverJarDependency{}";
+    }
 }

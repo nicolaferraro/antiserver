@@ -19,13 +19,11 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- TODO Remove -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.22</version>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
-        <!-- TODO Remove -->
 
         <dependency>
             <groupId>org.apache.commons</groupId>

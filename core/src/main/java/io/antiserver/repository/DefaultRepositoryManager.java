@@ -111,6 +111,16 @@ public class DefaultRepositoryManager implements RepositoryManager {
         });
     }
 
+    @Override
+    public CompletableFuture<Void> preload(List<AntiserverMavenDependency> dependencies) {
+        return CompletableFuture.supplyAsync(() -> {
+            dependencies.stream()
+                    .map(AntiserverMavenDependency::getGav)
+                    .forEach(resolver::resolve);
+            return null;
+        });
+    }
+
     private URL toURL(Artifact artifact) {
         try {
             return artifact.getFile().toURI().toURL();
